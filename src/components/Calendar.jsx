@@ -33,12 +33,12 @@ export default class Calendar extends Component{
     }
 
     componentDidMount(){
-        const data = JSON.parse(sessionStorage.getItem('data'));
+        const data = JSON.parse(localStorage.getItem('data'));
         this.setState({
             month: this.state.dateObject.format("MMMM"),
             todayMonth: this.state.dateObject.format("MMMM")
         })
-        if(sessionStorage.getItem('data')){
+        if(localStorage.getItem('data')){
             this.setState({
                 data
             })
@@ -151,7 +151,7 @@ export default class Calendar extends Component{
         this.setState({
             data: newData
         }, () => {
-            sessionStorage.setItem('data',JSON.stringify(this.state.data));
+            localStorage.setItem('data',JSON.stringify(this.state.data));
         })
         
     }
@@ -185,7 +185,7 @@ export default class Calendar extends Component{
             startTimeEdit: '',
             endTimeEdit: '',
         }, () => {
-            sessionStorage.setItem('data',JSON.stringify(this.state.data));
+            localStorage.setItem('data',JSON.stringify(this.state.data));
         })
 
 
@@ -207,7 +207,7 @@ export default class Calendar extends Component{
             time: '',
             invitation: ''
         }, () => {
-            sessionStorage.setItem('data',JSON.stringify(this.state.data));
+            localStorage.setItem('data',JSON.stringify(this.state.data));
         })
 
       };
