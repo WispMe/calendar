@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import moment from 'moment'
-import Modal from './Modal.js'
+import Modal from './Modal.jsx'
 
-import 'rc-time-picker/assets/index.css';
+// import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
 
 export default class Calendar extends Component{
