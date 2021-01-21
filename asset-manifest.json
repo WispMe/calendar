@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/wispme.github.io/calendar/static/css/main.fa27f49e.chunk.css",
+    "main.css": "/wispme.github.io/calendar/static/css/main.b2094380.chunk.css",
     "main.js": "/wispme.github.io/calendar/static/js/main.9a24eeb1.chunk.js",
     "main.js.map": "/wispme.github.io/calendar/static/js/main.9a24eeb1.chunk.js.map",
     "runtime-main.js": "/wispme.github.io/calendar/static/js/runtime-main.1e49ffb2.js",
@@ -10,13 +10,13 @@
     "static/js/3.6bf361b7.chunk.js": "/wispme.github.io/calendar/static/js/3.6bf361b7.chunk.js",
     "static/js/3.6bf361b7.chunk.js.map": "/wispme.github.io/calendar/static/js/3.6bf361b7.chunk.js.map",
     "index.html": "/wispme.github.io/calendar/index.html",
-    "static/css/main.fa27f49e.chunk.css.map": "/wispme.github.io/calendar/static/css/main.fa27f49e.chunk.css.map",
+    "static/css/main.b2094380.chunk.css.map": "/wispme.github.io/calendar/static/css/main.b2094380.chunk.css.map",
     "static/js/2.a35452c2.chunk.js.LICENSE.txt": "/wispme.github.io/calendar/static/js/2.a35452c2.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.1e49ffb2.js",
     "static/js/2.a35452c2.chunk.js",
-    "static/css/main.fa27f49e.chunk.css",
+    "static/css/main.b2094380.chunk.css",
     "static/js/main.9a24eeb1.chunk.js"
   ]
 }
