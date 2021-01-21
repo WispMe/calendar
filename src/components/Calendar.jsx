@@ -1,6 +1,9 @@
 import React, {Component} from 'react'
 import moment from 'moment'
-import Modal from './Modal.js';
+import Modal from './Modal.js'
+
+import 'rc-time-picker/assets/index.css';
+import TimePicker from 'rc-time-picker';
 
 export default class Calendar extends Component{
     state = {
@@ -12,9 +15,21 @@ export default class Calendar extends Component{
         todayMonth: '',
         show: false,
         title: '',
-        time: '',
+        time: [],
+        startTime: '00:00',
+        endTime: '00:00',
         invitation: '',
-        data: []
+        eventCount: 0,
+        data: [],
+        format: 'HH:mm',
+        showEdit: false,
+        editEvent: '',
+        titleEdit: '',
+        invitationEdit: '',
+        timeEdit: [],
+        startTimeEdit: '',
+        endTimeEdit: '',
+        addDisabled: false
     }
 
     componentDidMount(){
@@ -67,23 +82,130 @@ export default class Calendar extends Component{
 
     
     // Modal
+
+    changeStartTime = (value) => {
+        if(value === null){
+            this.setState({
+                startTime: ''
+            })
+        }else{
+            this.setState({
+                startTime: value.format(this.state.format)
+            })
+        }
+    }
+
+    changeEndTime = (value) => {
+        if(value === null){
+            this.setState({
+                endTime: ''
+            })
+        }else{
+            this.setState({
+                endTime: value.format(this.state.format)
+            })
+        }
+    }
+
+    changeStartTimeEdit = (value) => {
+        if(value === null){
+            this.setState({
+                startTimeEdit: ''
+            })
+        }else{
+            this.setState({
+                startTimeEdit: value.format(this.state.format)
+            })
+        }
+    }
+
+    changeEndTimeEdit = (value) => {
+        if(value === null){
+            this.setState({
+                endTimeEdit: ''
+            })
+        }else{
+            this.setState({
+                endTimeEdit: value.format(this.state.format)
+            })
+        }
+    }
+
     handleChange = (e) => {
         this.setState({
             [e.target.name]: e.target.value
         })
     }
 
+    handleDelete = (sEvent) => {
+        let dataTemp = this.state.data
+        let newData = []
+        dataTemp.map((dEvent) => {
+            if(dEvent === sEvent){
+                
+            }else{
+                newData.push(dEvent)
+            }
+            return newData
+        })
+        this.setState({
+            data: newData
+        }, () => {
+            localStorage.setItem('data',JSON.stringify(this.state.data));
+        })
+        
+    }
+
+    handleFormSubmitEdit = (sEvent) => {
+
+        let dataTemp = this.state.data
+        let newData = []
+
+        dataTemp.map((dEvent) => {
+            if(dEvent === sEvent){
+                const {titleEdit, invitationEdit, month, currentDay, startTimeEdit, endTimeEdit} = this.state
+
+                const setData = {
+                    date: `${currentDay} ${month}`,
+                    title: titleEdit,
+                    time: [startTimeEdit, endTimeEdit],
+                    invitation: invitationEdit
+                }
+
+                newData.push(setData)
+            }else{
+                newData.push(dEvent)
+            }
+            return newData
+        })
+        this.setState({
+            data: newData,
+            titleEdit: '',
+            invitationEdit: '',
+            startTimeEdit: '',
+            endTimeEdit: '',
+        }, () => {
+            localStorage.setItem('data',JSON.stringify(this.state.data));
+        })
+
+
+    }
+
     handleFormSubmit = (e) => {
         e.preventDefault()
-        const {title, time, invitation, month, currentDay} = this.state
+        const {title, invitation, month, currentDay, startTime, endTime} = this.state
+
         const setData = {
             date: `${currentDay} ${month}`,
             title,
-            time,
+            time: [startTime, endTime],
             invitation
         }
         this.setState({
-            data: [...this.state.data, setData]
+            data: [...this.state.data, setData],
+            title: '',
+            time: '',
+            invitation: ''
         }, () => {
             localStorage.setItem('data',JSON.stringify(this.state.data));
         })
@@ -100,9 +222,25 @@ export default class Calendar extends Component{
       hideModal = () => {
         this.setState({ show: false });
       };
+
+      showModalEdit = (dEvent) =>{
+        this.setState({
+            showEdit: true,
+            titleEdit: dEvent.title,
+            invitationEdit: dEvent.invitation,
+            startTimeEdit: dEvent.time[0],
+            endTimeEdit: dEvent.time[1]
+        })
+      }
+
+      hideModalEdit = () => {
+        this.setState({ showEdit: false });
+      };
     
     render() {
-        const {days, allmonths, data} = this.state
+        const {days, allmonths, data, title, invitation} = this.state
+        const now = moment().hour(0).minute(0);
+        var eventCount = 0
 
         let blanks = [];
         for (let i = 0; i < this.firstDayOfMonth(); i++) {
@@ -115,9 +253,21 @@ export default class Calendar extends Component{
         for (let d = 1; d <= this.daysInMonth(); d++) {
             let currentDay = (d === Number(this.currentDay()) && this.state.todayMonth === this.month() ? "today" : "");   
             daysInMonth.push(
-                // onClick={() => this.handleClick(d, this.state.month)
                 <td key={d} className='calendar-day' onClick={() => this.showModal(d)}>
                     <span className={currentDay} style={{fontSize: '12px'}}>{d}</span>
+                    <div className="d-flex flex-column" style={{height: "80%"}}>
+                        {data.map((dEvent) => {
+                                let eventDay = ''
+                                if(dEvent.date === (`${d} ${this.state.month}`)){
+                                    eventDay = (
+                                        <div key={dEvent.title} className="eventDay" style={{height: "100%"}}>
+                                            <p>{dEvent.title} ({dEvent.time[0]} - {dEvent.time[1]})</p>
+                                        </div>
+                                    )
+                                }
+                                return eventDay
+                            })}
+                    </div>
                 </td>
             );
         }
@@ -151,9 +301,11 @@ export default class Calendar extends Component{
             return <tr>{d}</tr>;
           });
         
+
         return (
             <section className="calendar">
                 <div className="calendar-content d-flex justify-content-center align-items-center flex-column">
+                    <h1 style={{fontSize: "34px"}}>Calendar 2021</h1>
                     <div className="month">
                         <select name="month" id="month" onChange={this.setMonth}>
                             {allmonths.map((month) =>{
@@ -186,26 +338,93 @@ export default class Calendar extends Component{
                     <div className="line"></div>
                     <div>
                         <p className="titleModal">Events</p>
-                        {data.map((dEvent) => {
+                        {data.map((dEvent, id) => {
                             let eventDay = ''
                             if(dEvent.date === (`${this.state.currentDay} ${this.state.month}`)){
+                                eventCount++
                                 eventDay = (
-                                    <div className="event" key={dEvent}>
-                                        <p>{dEvent.title} ({dEvent.time})</p>
+                                    <div className="event" key={id}>
+                                        <span onClick={() => this.showModalEdit(dEvent)} className="edit">Edit</span>
+                                        <span onClick={() => this.handleDelete(dEvent)} className="delete">x</span>
+                                        <p>{dEvent.title} ({dEvent.time[0]} - {dEvent.time[1]})</p>
                                         <br/>
-                                        <span>{dEvent.invitation}</span>
+                                        <div className="invitation">
+                                            <p>Who:</p>
+                                            <ul>
+                                                <li style={{paddingLeft: "20px"}}>{dEvent.invitation}</li>
+                                            </ul>
+                                        </div>
+                                        <Modal show={this.state.showEdit} handleClose={this.hideModalEdit}>
+                                            <div>
+                                                <p className="titleModal">Edit Event</p>
+                                                <div className="line"></div>
+                                                <form onSubmit={() => this.handleFormSubmitEdit(dEvent)} className="d-flex justify-content-center align-items-center flex-column">
+                                                    <div className="div-input">
+                                                        <span>Title&ensp;&ensp;: </span>
+                                                        <input type="text" name="titleEdit" placeholder="Title" value={this.state.titleEdit} onChange={this.handleChange}/><br/>
+                                                    </div>
+                                                    <div className="div-input">
+                                                        <span>Time&ensp;&ensp;: </span>
+                                                        <TimePicker
+                                                            showSecond={false}
+                                                            defaultValue={moment().hour(Number(dEvent.time[0].substr(0, 2))).minute(Number(dEvent.time[0].substr(3, 2)))}
+                                                            className="xxx"
+                                                            onChange={this.changeStartTimeEdit}
+                                                            inputReadOnly
+                                                        />
+                                                        <span> to </span>
+                                                        <TimePicker
+                                                            showSecond={false}
+                                                            defaultValue={moment().hour(Number(dEvent.time[1].substr(0, 2))).minute(Number(dEvent.time[1].substr(3, 2)))}
+                                                            className="xxx"
+                                                            onChange={this.changeEndTimeEdit}
+                                                            inputReadOnly
+                                                        />
+                                                        <br/>
+                                                    </div>
+                                                    <div className="div-input">
+                                                        <span>Invite&ensp;: </span>
+                                                        <input type="text" name="invitationEdit" placeholder="Invite" value={this.state.invitationEdit} onChange={this.handleChange}/><br/>
+                                                    </div>
+                                                    <button type="submit" className="primaryButton">Edit</button>
+                                                </form>
+                                            </div>
+                                        </Modal>
                                     </div>
                                 )
                             }
                             return eventDay
                         })}
+                        <div className="line"></div>
                         <div className="d-flex justify-content-center align-items-center flex-column">
                             <p className="titleModal">Add Event</p>
-                            <form onSubmit={this.handleFormSubmit}>
-                                <input type="text" name="title" placeholder="Title" onChange={this.handleChange}/><br/>
-                                <input type="text" name="time" placeholder="Time" onChange={this.handleChange}/><br/>
-                                <input type="text" name="invitation" placeholder="Invitation" onChange={this.handleChange}/><br/>
-                                <button type="submit" className="primaryButton">Add</button>
+                            <form onSubmit={this.handleFormSubmit} className="d-flex justify-content-center align-items-center flex-column">
+                                <div className="div-input">
+                                    <span>Title&ensp;&ensp;: </span>
+                                    <input type="text" name="title" placeholder="Title" value={title} onChange={this.handleChange}/><br/>
+                                </div>
+                                <div className="div-input">
+                                    <span>Time&ensp;&ensp;: </span>
+                                    <TimePicker
+                                        showSecond={false}
+                                        defaultValue={now}
+                                        className="xxx"
+                                        onChange={this.changeStartTime}
+                                    />
+                                    <span> to </span>
+                                    <TimePicker
+                                        showSecond={false}
+                                        defaultValue={now}
+                                        className="xxx"
+                                        onChange={this.changeEndTime}
+                                    />
+                                    <br/>
+                                </div>
+                                <div className="div-input">
+                                    <span>Invite&ensp;: </span>
+                                    <input type="text" name="invitation" placeholder="Invite" value={invitation} onChange={this.handleChange}/><br/>
+                                </div>
+                                <button type="submit" className="primaryButton" disabled={eventCount < 3 ? false : true}>Add</button>
                             </form>
                         </div>
                     </div>

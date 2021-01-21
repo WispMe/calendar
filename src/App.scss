@@ -1,5 +1,7 @@
 @import "./assets/css/reset.css";
 
+$colors: red, blue, orange, green, purple, darkblue, darkred, darkgreen, darkorange, brown;
+
 .calendar{
   width: 100vw;
   height: 100vh;
@@ -52,7 +54,7 @@
 .modal-main {
   position:fixed;
   background: white;
-  width: 40%;
+  width: 75%;
   padding: 20px;
   height: auto;
   border-radius: 10px;
@@ -76,19 +78,42 @@
 .line{
   width: 100%;
   height: 2px;
-  background-color: rgba(4, 0, 255, 0.5);
+  background-color: black;
   margin: 10px 0;
 }
 
 .titleModal{
   text-align: center;
   font-weight: 700;
-  margin: 20px 0;
+  margin: 0;
+  margin-top: 20px;
 }
 
 .event{
   padding: 10px;
+  margin: 10px 0;
   border: 1px solid  rgba(138, 138, 138, 0.6);
+  position: relative;
+  .delete, .edit{
+    display: none;
+  }
+  &:hover{
+    .edit{
+      display: block;
+      position: absolute;
+      right: 40px;
+      top: 10px;
+      cursor: pointer;
+    }
+    .delete{
+      display: block;
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+  }
 }
 
 form{
@@ -99,19 +124,30 @@ input{
     border-top-style: hidden;
     border-right-style: hidden;
     border-left-style: hidden;
+    border-bottom-style: hidden;
     border-bottom: 1px solid black;
     background-color: rgba(242, 242, 242, 0);
-    margin: 10px 0;
-    width: 100%;
+    margin-bottom: 10px;
+    width: 80%;
+}
+
+.div-input{
+  width: 75%;
+}
+
+.time{
+  width: 20%;
 }
 
 .primaryButton{
-  background-color: rgba(4, 0, 255, 0.5);
-  border: 1px solid #A8A394;
-  border-radius: 20px;
-  padding: 5px 10px;
+  background-color: darkblue;
+  border: 1px solid #7c7a75;
+  border-radius: 5px;
+  padding: 0 20px;
   color: white;
-  font-weight: 700;
+  &:disabled{
+  background-color: rgba(0, 0, 139, 0.5);
+  }
 }
 
 .close{
@@ -119,4 +155,38 @@ input{
   right: 20px;
   top: 10px;
   cursor: pointer;
+}
+
+
+$countX: 31;
+$countY: 3;
+
+@for $x from 1 through $countX{
+  .calendar-day{
+    &:nth-child(#{$x}){
+      @for $y from 1 through $countY{
+        .eventDay{
+          &:nth-child(#{$y}){
+            background-color: nth($colors, random(length($colors)));
+          }
+        }
+      }
+    }
+  }
+}
+
+
+.eventDay{
+padding: 5px;
+font-size: 12px;
+color: white;
+border-radius: 5px;
+}
+
+.invitation{
+  font-size: 12px;
+}
+
+.rc-time-picker-clear-icon:after{
+  display: none !important;
 }
