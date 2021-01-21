@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import moment from 'moment'
-import Modal from './Modal.jsx'
+import Modal from './Modal'
 
 // import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
